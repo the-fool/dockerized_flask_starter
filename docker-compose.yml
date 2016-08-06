@@ -16,10 +16,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/web/Dockerfile
-    user: webbie
     depends_on:
       - db
-    command: /gunicorn.sh
     env_file: secret.env
 
   proxy:
