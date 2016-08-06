@@ -1,0 +1,30 @@
+version: '2'
+
+volumes:
+  postgres_data: {}
+  postgres_backup: {}
+
+services:
+  db:
+    build: ./compose/db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_backup:/backups
+    env_file: secret.env
+
+  web:
+    build:
+      context: .
+      dockerfile: ./compose/web/Dockerfile
+    user: webbie
+    depends_on:
+      - db
+    command: /gunicorn.sh
+    env_file: secret.env
+
+  proxy:
+    build: ./compose/proxy
+    depends_on:
+      - web
+    ports:
+      - "0.0.0.0:80:80"
